@@ -1,0 +1,51 @@
+// A very simple bar chart to learn Vega
+// Not contain the transform function to see how Vega works
+// Note: if the dataset is not aggregate, the chart will display the first row (like in coconut)
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A simple bar chart using the Iris dataset.",
+  "width": 400,
+  "height": 200,
+  "padding": 5,
+
+  "data": [
+    {
+      "name": "dataset",
+      "values": [
+        {"x": "apple", "y": "28"},
+        {"x": "banana", "y": "43"},
+        {"x": "coconut", "y": "25"},
+        {"x": "coconut", "y": "45"}
+        ]
+    }
+  ],
+  "scales": [
+    {"name": "xscale",
+    "type": "band",
+    "domain":{"data": "dataset", "field": "x"},
+    "range":"width"
+    },
+    {"name": "yscale",
+    "type": "linear",
+    "domain":{"data": "dataset", "field":"y"},
+    "range":"height"}
+  ],
+  "axes": [
+    {"orient":"bottom", "scale": "xscale","title":"Fruit"},
+    {"orient":"left", "scale": "yscale","title":"Petal"}
+  ],
+  "marks": [
+    {"type": "rect",
+    "from": {"data": "dataset"},
+    "encode": {
+      "enter":{
+        "x": {"scale":"xscale", "field": "x"},
+        "width":{"scale":"xscale", "band":1},
+        "y": {"scale":"yscale", "field": "y"},
+        "y2" :{"scale": "yscale", "value": 0}
+      }
+      }
+    }
+    
+  ]
+}
