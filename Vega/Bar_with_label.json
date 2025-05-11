@@ -1,0 +1,63 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A simple bar chart using the Iris dataset.",
+  "width": 400,
+  "height": 200,
+  "padding": 5,
+
+  "data": [
+    {
+      "name": "dataset",
+      "values": [
+        {"Fruit": "apple", "TY": 28, "LY": 28},
+        {"Fruit": "coconut", "TY": 55, "LY": 25},
+        {"Fruit": "banana", "TY": 45, "LY": 65}
+        ]
+    }   
+  ],
+  "scales": [
+    {"name": "xscale",
+    "type": "band",
+    "domain":{"data": "dataset", "field": "Fruit"},
+    "range":"width"
+    },
+    {"name": "yscale",
+    "type": "linear",
+    "domain":{"data": "dataset", "field":"TY"},
+    "range":"height"}
+  ],
+  "axes": [
+    {"orient":"bottom", "scale": "xscale","title":"Fruit"},
+    {"orient":"left", "scale": "yscale","title":""}
+  ],
+  "marks": [
+    {"name": "rect-ty",
+    "type": "rect",
+    "from": {"data": "dataset"},
+    "encode": {
+      "enter":{
+        "x": {"scale":"xscale", "field": "Fruit", "band":0.25},
+        "width":{"scale":"xscale", "band":0.5},
+        "y": {"scale":"yscale", "field": "TY"},
+        "y2" :{"scale": "yscale", "value": 0}
+      }
+      }
+    },
+    {"name": "ty-label",
+    "type": "text",
+    "from": {"data": "dataset"},
+    "encode": {
+      "enter":{
+        "fill": {"value": "#333"},
+        "text":{"field":"TY"},
+        "baseline":{"value": "bottom"},
+        "width":{"field": "Fruit"},
+        "align":{"value": "center"},
+        "x":{"field":"Fruit", "scale":"xscale", "band":0.5},
+        "y": {"field":"TY", "scale":"yscale", "offset":-3}
+      }
+      }
+    }
+    
+  ]
+}
