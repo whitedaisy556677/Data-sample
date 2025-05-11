@@ -1,0 +1,136 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "A simple bar chart using the Iris dataset.",
+  "width": 400,
+  "height": 200,
+  "padding": 5,
+  "data": [
+    {
+      "name": "dataset",
+      "values": [
+        {"Fruit": "apple", "TY": 28, "LY": 28},
+        {"Fruit": "coconut", "TY": 55, "LY": 35},
+        {"Fruit": "banana", "TY": 45, "LY": 65},
+        {"Fruit": "pineapple", "TY": 20, "LY": 15}
+      ],
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "round((datum.TY-datum.LY)/datum.TY*100,2)",
+          "as": "delta"
+        }
+      ]
+    }
+  ],
+  "scales": [
+    {
+      "name": "xscale",
+      "type": "band",
+      "domain": {"data": "dataset", "field": "Fruit"},
+      "range": "width"
+    },
+    {
+      "name": "yscale",
+      "type": "linear",
+      "domain": {"data": "dataset", "field": "TY"},
+      "range": "height"
+    }
+  ],
+  "axes": [
+    {"orient": "bottom", "scale": "xscale", "title": "Fruit"},
+    {"orient": "left", "scale": "yscale", "title": ""}
+  ],
+  "signals": [
+    {
+      "name": "tooltipContent",
+      "value": [],
+      "on": [
+        {
+          "events": "@rect-ty:pointerover",
+          "update": "datum.Fruit + '\\nTY: ' + datum.TY + '\\nLY: ' + datum.LY + '\\nTY: ' + datum.delta"
+        
+        },
+        {"events": "@rect-ty:pointerout", "update": "[]"}
+      ]
+    },
+    {
+      "name": "tooltip",
+      "value": {},
+      "on": [
+        {"events": "rect-ly:pointerover", "update": "datum.LY"},
+        {"events": "rect-ly:pointerout", "update": "{}"}
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "rect-ly",
+      "type": "rect",
+      "from": {"data": "dataset"},
+      "interactive": true,
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "Fruit", "band": 0.1},
+          "width": {"scale": "xscale", "band": 0.5},
+          "y": {"scale": "yscale", "field": "LY"},
+          "y2": {"scale": "yscale", "value": 0},
+          "fill": {"value": "grey"},
+          "fillOpacity": {"value": 0.3}
+        }
+      }
+    },
+    {
+      "name": "rect-ty",
+      "type": "rect",
+      "from": {"data": "dataset"},
+      "interactive": true,
+      "encode": {
+        "enter": {
+          "x": {"scale": "xscale", "field": "Fruit", "band": 0.25},
+          "width": {"scale": "xscale", "band": 0.5},
+          "y": {"scale": "yscale", "field": "TY"},
+          "y2": {"scale": "yscale", "value": 0},
+          "fill": {"value": "#01406C"}
+        },
+        "update": {"tooltip": {"signal": "tooltipContent"}}
+      }
+        
+    },
+    {
+      "name": "rect-delta",
+      "type": "rect",
+      "from": {"data": "dataset"},
+      "encode": {
+        "enter": {
+          "xc": {
+            "scale": "xscale",
+            "field": "Fruit",
+            "offset": {
+              "signal": "(datum.TY<datum.LY?0.67:0.18)*bandwidth('xscale')"
+            }
+          },
+          "width": {"scale": "xscale", "band": 0.15},
+          "y": {"scale": "yscale", "signal": "min(datum.LY,datum.TY)"},
+          "y2": {"scale": "yscale", "signal": "max(datum.LY,datum.TY)"},
+          "fill": {"signal": "datum.TY<datum.LY?'red':'green'"}
+        }
+      }
+    },
+    {
+      "name": "ty-label",
+      "type": "text",
+      "from": {"data": "dataset"},
+      "encode": {
+        "enter": {
+          "text": {"signal": "datum.TY + ' (' + datum.delta + '%)'"},
+          "baseline": {"value": "bottom"},
+          "width": {"field": "Fruit"},
+          "align": {"value": "center"},
+          "x": {"field": "Fruit", "scale": "xscale", "band": 0.5},
+          "y": {"field": "TY", "scale": "yscale", "offset": -3},
+          "fill": {"value": "#333"}
+        }
+      }
+    }
+  ]
+}
